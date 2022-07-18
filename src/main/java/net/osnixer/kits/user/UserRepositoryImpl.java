@@ -8,14 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 public class UserRepositoryImpl implements UserRepository {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final DatabaseService databaseService;
+    private final Logger logger;
 
-    public UserRepositoryImpl(DatabaseService databaseService) {
+    public UserRepositoryImpl(DatabaseService databaseService, Logger logger) {
         this.databaseService = databaseService;
+        this.logger = logger;
     }
 
     @Override
@@ -29,8 +32,9 @@ public class UserRepositoryImpl implements UserRepository {
                 this.databaseService.getUsersDao().createOrUpdate(UserWrapper.fromUser(user));
 
                 user.setChanged(false);
-            } catch (SQLException e) {
-                e.printStackTrace();
+            }
+            catch (SQLException e) {
+                this.logger.severe("Failed to save user! " + e.getMessage());
             }
         });
 
@@ -48,7 +52,7 @@ public class UserRepositoryImpl implements UserRepository {
             });
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            this.logger.severe("Failed to load users! " + e.getMessage());
         }
 
         return users;

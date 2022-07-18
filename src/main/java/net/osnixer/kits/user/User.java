@@ -29,8 +29,8 @@ public class User {
     }
 
     public void markKitUse(Kit kit) {
-        Instant now = Instant.now();
         Duration kitTime = kit.getDuration();
+        Instant now = Instant.now();
 
         this.kits.put(kit.getName(), now.plus(kitTime));
 

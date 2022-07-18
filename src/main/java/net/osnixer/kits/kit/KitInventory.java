@@ -42,7 +42,7 @@ public class KitInventory {
     public void openInventory(Player player) {
         Optional<User> userOptional = this.userService.findUser(player.getUniqueId());
 
-        if (userOptional.isEmpty()) {
+        if (!userOptional.isPresent()) {
             player.kickPlayer("user not found");
 
             throw new IllegalStateException("user not found");
@@ -156,7 +156,7 @@ public class KitInventory {
             return;
         }
 
-        if (!user.canUseKit(kit) && !player.hasPermission(this.config.global.kitBypassPermission)) {
+        if (!user.canUseKit(kit) /*&& !player.hasPermission(this.config.global.kitBypassPermission)*/) {
             Duration timeLeft = Duration.between(Instant.now(), user.getLastKitUse(kit));
 
             audience.sendMessage(ChatUtil.mini(this.messages.argument.kitOnCooldown.replace("{TIME}", DurationUtil.format(timeLeft))));

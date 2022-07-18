@@ -18,8 +18,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -62,7 +62,7 @@ public class KitEditCommand {
             return this.messages.argument.kitAlreadyExists;
         }
 
-        this.kitRepository.saveKit(name, name, duration, permission, List.of(), List.of(), new ItemStack(icon), slot);
+        this.kitRepository.saveKit(name, name, duration, permission, new ArrayList<>(), new ArrayList<>(), new ItemStack(icon), slot);
 
         return this.messages.kitEdit.create
                 .replace("{KIT}", name)

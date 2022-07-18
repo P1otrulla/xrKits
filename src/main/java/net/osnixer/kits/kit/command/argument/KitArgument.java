@@ -26,7 +26,7 @@ public class KitArgument implements OneArgument<Kit> {
     public Result<Kit, ?> parse(LiteInvocation liteInvocation, String argument) {
         Optional<Kit> kitOptional = this.repository.getKit(argument);
 
-        if (kitOptional.isEmpty()) {
+        if (!kitOptional.isPresent()) {
             return Result.error(this.messages.argument.kitNoExists);
         }
 

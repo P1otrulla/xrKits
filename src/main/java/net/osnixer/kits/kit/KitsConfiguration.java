@@ -1,5 +1,6 @@
 package net.osnixer.kits.kit;
 
+import com.google.common.collect.ImmutableMap;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import net.dzikoysk.cdn.entity.Contextual;
 import net.dzikoysk.cdn.source.Resource;
@@ -13,24 +14,25 @@ import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 class KitsConfiguration implements ReloadableConfig {
 
-    Map<String, KitConfig> kits = Map.of(
-            "gracz", new KitConfig("gracz",
+    Map<String, KitConfig> kits = ImmutableMap.<String, KitConfig>builder()
+            .put("gracz", new KitConfig("gracz",
                     "Gracz",
                     Duration.ofMinutes(30),
                     "kit.gracz",
-                    List.of(new ItemStack(Material.DIAMOND_SWORD)),
-                    List.of(),
+                    Collections.singletonList(new ItemStack(Material.DIAMOND_SWORD)),
+                    new ArrayList<>(),
                     ItemBuilder.from(Material.DIAMOND_SWORD)
                             .name(ChatUtil.mini("<dark_gray>• <dark_green>Kit: <white>Gracz"))
-                            .lore(ChatUtil.mini(Arrays.asList("   <dark_gray>» <gray>Kliknij PPM, aby obejrzeć kit!", "   <dark_gray>» <gray>Kliknij LPM, aby odebrać kit!")))
+                            .lore(ChatUtil.mini(Arrays.asList("", "<dark_gray>» <gray>Kliknij PPM, aby obejrzeć kit!", "<dark_gray>» <gray>Kliknij LPM, aby odebrać kit!")))
                             .build(),
-                    10)
-    );
+                    10))
+            .build();
 
     @Contextual
     static class KitConfig implements Kit {

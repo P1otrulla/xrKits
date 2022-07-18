@@ -27,7 +27,7 @@ public class UserController implements Listener {
 
         Optional<User> userOptional = this.userService.findUser(uniqueId);
 
-        if (userOptional.isEmpty()) {
+        if (!userOptional.isPresent()) {
             this.userService.createUser(uniqueId);
         }
     }
@@ -36,17 +36,15 @@ public class UserController implements Listener {
     public void onQuit(PlayerKickEvent event) {
         Player player = event.getPlayer();
 
-        this.userService.findUser(player.getUniqueId()).ifPresent(user -> {
-            if (user.isChanged()) {
-                this.userRepository.saveUser(user);
-            }
-        });
+        this.userService.findUser(player.getUniqueId())
+                .ifPresent(this.userRepository::saveUser);
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
-        this.userService.findUser(player.getUniqueId()).ifPresent(this.userRepository::saveUser);
+        this.userService.findUser(player.getUniqueId())
+                .ifPresent(this.userRepository::saveUser);
     }
 }
