@@ -1,10 +1,13 @@
 package net.osnixer.kits.config.implementation;
 
+import com.google.common.collect.ImmutableMap;
+import com.j256.ormlite.stmt.query.In;
 import net.dzikoysk.cdn.entity.Contextual;
 import net.dzikoysk.cdn.entity.Description;
 import net.dzikoysk.cdn.source.Resource;
 import net.dzikoysk.cdn.source.Source;
 import net.osnixer.kits.config.ReloadableConfig;
+import net.osnixer.kits.database.DatabaseType;
 import net.osnixer.kits.kit.KitAction;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.ClickType;
@@ -33,10 +36,12 @@ public class PluginConfig implements ReloadableConfig {
     public Filler filler = new Filler();
 
     @Description({ " ", "# Dekoracje w gui", "# slot: item" })
-    public Map<Integer, Material> decorate = Map.of(0, Material.RED_STAINED_GLASS_PANE,
-            8, Material.RED_STAINED_GLASS_PANE,
-            18, Material.RED_STAINED_GLASS_PANE,
-            26, Material.RED_STAINED_GLASS_PANE);
+    public Map<Integer, Material> decorate = ImmutableMap.<Integer, Material>builder()
+            .put(0, Material.RED_STAINED_GLASS_PANE)
+            .put(8, Material.RED_STAINED_GLASS_PANE)
+            .put(18, Material.RED_STAINED_GLASS_PANE)
+            .put(26, Material.RED_STAINED_GLASS_PANE)
+            .build();
 
     @Description(" ")
     public Close close = new Close();
@@ -44,13 +49,13 @@ public class PluginConfig implements ReloadableConfig {
     @Contextual
     public static class Database {
 
+        @Description("# Types: MYSQL, SQLITE")
+        public DatabaseType type = DatabaseType.SQLITE;
         public String host = "localhost";
         public int port = 3306;
         public String base = "zamowienia";
         public String user = "osnixer";
         public String pass = "pass";
-        public boolean useSSL = false;
-        public int timeOut = 30000;
         public int poolSize = 16;
 
     }
@@ -81,7 +86,10 @@ public class PluginConfig implements ReloadableConfig {
                 "# ",
                 "# ClickType: ",
                 "# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/inventory/ClickType.html" })
-        public Map<ClickType, KitAction> actions = Map.of(ClickType.RIGHT, KitAction.PICKUP, ClickType.LEFT, KitAction.PREVIEW);
+        public Map<ClickType, KitAction> actions = ImmutableMap.<ClickType, KitAction>builder()
+                .put(ClickType.RIGHT, KitAction.PICKUP)
+                .put(ClickType.LEFT, KitAction.PREVIEW)
+                .build();
     }
 
     @Contextual

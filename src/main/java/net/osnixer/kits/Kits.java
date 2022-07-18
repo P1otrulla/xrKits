@@ -61,8 +61,10 @@ public final class Kits extends JavaPlugin {
         this.configManager.load(this.config);
         this.configManager.load(this.messages);
 
-        this.databaseService = new DatabaseService(this.config);
-        this.userRepositoryImpl = new UserRepositoryImpl(this.databaseService);
+        this.databaseService = new DatabaseService(this.config, this.getDataFolder(), this.getLogger());
+        this.databaseService.connect();
+
+        this.userRepositoryImpl = new UserRepositoryImpl(this.databaseService, this.getLogger());
         this.kitRepository = new KitRepositoryImpl(this.configManager);
 
         this.userService = new UserService();
@@ -70,7 +72,7 @@ public final class Kits extends JavaPlugin {
         this.kitInventory = new KitInventory(this.config, this.messages, this.kitRepository, this.userService, audienceProvider, server);
         this.kitEditInventory = new KitEditInventory(this.config, this.kitRepository);
 
-        this.liteCommands = LiteBukkitAdventurePlatformFactory.builder(server, "kits", audienceProvider)
+        this.liteCommands = LiteBukkitAdventurePlatformFactory.builder(server, "xrKits", audienceProvider)
                 .commandInstance(
                         new KitCommand(this.kitInventory),
                         new KitEditCommand(this.kitEditInventory, this.kitRepository, this.messages),
@@ -90,13 +92,7 @@ public final class Kits extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (this.getDatabaseService().getConnectionSource() != null) {
-            try {
-                this.getDatabaseService().getConnectionSource().close();
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-        }
+        this.databaseService.close();
     }
 
     public Kits getInstance() {

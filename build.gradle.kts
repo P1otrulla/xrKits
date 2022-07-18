@@ -35,7 +35,7 @@ dependencies {
     implementation("net.dzikoysk:cdn:1.13.23")
 
     // HikariCP
-    implementation("com.zaxxer:HikariCP:5.0.1")
+    implementation("com.zaxxer:HikariCP:4.0.3")
 
     // ormlite jdbc
     implementation("com.j256.ormlite:ormlite-jdbc:6.1")
@@ -60,7 +60,7 @@ tasks {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(11))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 tasks.withType<JavaCompile> {

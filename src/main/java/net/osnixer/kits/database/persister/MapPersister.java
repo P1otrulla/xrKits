@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class MapPersister extends BaseDataType {
 
-    private static final MapPersister instance = new MapPersister();
+    private static final MapPersister INSTANCE = new MapPersister();
 
     private MapPersister() {
         super(SqlType.LONG_STRING, new Class<?>[] { MapPersister.class });
@@ -77,6 +77,6 @@ public class MapPersister extends BaseDataType {
     }
 
     public static MapPersister getSingleton() {
-        return instance;
+        return INSTANCE;
     }
 }
