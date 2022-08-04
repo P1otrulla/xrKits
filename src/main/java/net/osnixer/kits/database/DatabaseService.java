@@ -60,7 +60,7 @@ public class DatabaseService {
 
                 case SQLITE: {
                     this.dataSource.setDriverClassName("org.sqlite.JDBC");
-                    this.dataSource.setJdbcUrl("jdbc:sqlite:" + this.dataFolder + "/database.db");
+                    this.dataSource.setJdbcUrl("jdbc:sqlite:" + this.dataFolder + File.separator +  "data" + File.separator + "database.db");
 
                     break;
                 }

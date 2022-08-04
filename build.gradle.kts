@@ -89,4 +89,5 @@ tasks.withType<ShadowJar> {
     relocate("dev.triumphteam", "net.osnixer.kits.shared.dev.triumphteam")
     relocate("net.kyori", "net.osnixer.kits.shared.net.kyori")
     relocate("com.google.gson", "net.osnixer.crafthype.kits.shared.com.google.gson")
+    relocate("org.bstats", "net.osnixer.kits.shared.org.bstats")
 }
