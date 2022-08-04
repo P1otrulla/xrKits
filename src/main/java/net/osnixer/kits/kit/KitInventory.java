@@ -178,7 +178,7 @@ public class KitInventory {
         audience.sendMessage(ChatUtil.mini(this.messages.kitTaken.replace("{KIT}", kit.getDisplayName())));
 
         this.kitData.addUsedKit();
-        this.configManager.load(this.kitData);
+        this.configManager.save(this.kitData);
 
         player.closeInventory();
     }
