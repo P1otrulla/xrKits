@@ -6,6 +6,7 @@ import dev.rollczi.litecommands.bukkit.tools.BukkitOnlyPlayerContextual;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.osnixer.kits.config.ConfigManager;
+import net.osnixer.kits.config.implementation.KitDataConfig;
 import net.osnixer.kits.config.implementation.MessagesConfig;
 import net.osnixer.kits.config.implementation.PluginConfig;
 import net.osnixer.kits.database.DatabaseService;
@@ -22,6 +23,8 @@ import net.osnixer.kits.kit.command.argument.KitArgument;
 import net.osnixer.kits.user.UserController;
 import net.osnixer.kits.user.UserRepositoryImpl;
 import net.osnixer.kits.user.UserService;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SingleLineChart;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,7 +34,7 @@ import java.time.Duration;
 
 public final class Kits extends JavaPlugin {
 
-    private static Kits INSTANCE;
+    private static Kits instance;
 
     private ConfigManager configManager;
     private PluginConfig config;
@@ -49,17 +52,21 @@ public final class Kits extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        INSTANCE = this;
+        instance = this;
 
         final Server server = this.getServer();
 
         AudienceProvider audienceProvider = BukkitAudiences.create(this);
+
         this.configManager = new ConfigManager(this.getDataFolder());
         this.config = new PluginConfig();
         this.messages = new MessagesConfig();
 
+        KitDataConfig kitData = new KitDataConfig();
+
         this.configManager.load(this.config);
         this.configManager.load(this.messages);
+        this.configManager.load(kitData);
 
         this.databaseService = new DatabaseService(this.config, this.getDataFolder(), this.getLogger());
         this.databaseService.connect();
@@ -69,10 +76,10 @@ public final class Kits extends JavaPlugin {
 
         this.userService = new UserService();
 
-        this.kitInventory = new KitInventory(this.config, this.messages, this.kitRepository, this.userService, audienceProvider, server);
+        this.kitInventory = new KitInventory(this.config, this.messages, this.kitRepository, this.userService, audienceProvider, kitData, configManager, server);
         this.kitEditInventory = new KitEditInventory(this.config, this.kitRepository);
 
-        this.liteCommands = LiteBukkitAdventurePlatformFactory.builder(server, "xrKits", audienceProvider)
+        this.liteCommands = LiteBukkitAdventurePlatformFactory.builder(server, "xrkits", audienceProvider)
                 .commandInstance(
                         new KitCommand(this.kitInventory),
                         new KitEditCommand(this.kitEditInventory, this.kitRepository, this.messages),
@@ -88,6 +95,11 @@ public final class Kits extends JavaPlugin {
         this.userRepositoryImpl.loadAllUsers().forEach(user -> this.userService.addUser(user));
 
         this.getServer().getPluginManager().registerEvents(new UserController(this.userService, this.userRepositoryImpl), this);
+
+        Metrics metrics = new Metrics(this, 16014);
+
+        metrics.addCustomChart(new SingleLineChart("used_kits", kitData::getUsedKits));
+        metrics.addCustomChart(new SingleLineChart("total_kits", () -> this.kitRepository.getKits().size()));
     }
 
     @Override
@@ -96,7 +108,7 @@ public final class Kits extends JavaPlugin {
     }
 
     public Kits getInstance() {
-        return INSTANCE;
+        return instance;
     }
 
     public ConfigManager getConfigManager() {

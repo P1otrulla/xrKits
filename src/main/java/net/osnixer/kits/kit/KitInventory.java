@@ -5,6 +5,8 @@ import dev.triumphteam.gui.guis.Gui;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.text.Component;
+import net.osnixer.kits.config.ConfigManager;
+import net.osnixer.kits.config.implementation.KitDataConfig;
 import net.osnixer.kits.config.implementation.MessagesConfig;
 import net.osnixer.kits.config.implementation.PluginConfig;
 import net.osnixer.kits.user.User;
@@ -28,14 +30,18 @@ public class KitInventory {
     private final KitRepository kitRepository;
     private final UserService userService;
     private final AudienceProvider audienceProvider;
+    private final KitDataConfig kitData;
+    private final ConfigManager configManager;
     private final Server server;
 
-    public KitInventory(PluginConfig config, MessagesConfig messages, KitRepository kitRepository, UserService userService, AudienceProvider audienceProvider, Server server) {
+    public KitInventory(PluginConfig config, MessagesConfig messages, KitRepository kitRepository, UserService userService, AudienceProvider audienceProvider, KitDataConfig kitData, ConfigManager configManager, Server server) {
         this.config = config;
         this.messages = messages;
         this.kitRepository = kitRepository;
         this.userService = userService;
         this.audienceProvider = audienceProvider;
+        this.kitData = kitData;
+        this.configManager = configManager;
         this.server = server;
     }
 
@@ -117,7 +123,7 @@ public class KitInventory {
                 .create();
 
         for (ItemStack itemStack : kit.getItems()) {
-            ItemBuilder item = ItemBuilder.from(itemStack);
+            ItemBuilder item = ItemBuilder.from(itemStack.clone());
 
             gui.addItem(item.asGuiItem());
         }
@@ -156,7 +162,7 @@ public class KitInventory {
             return;
         }
 
-        if (!user.canUseKit(kit) /*&& !player.hasPermission(this.config.global.kitBypassPermission)*/) {
+        if (!user.canUseKit(kit) && !player.hasPermission(this.config.global.kitBypassPermission)) {
             Duration timeLeft = Duration.between(Instant.now(), user.getLastKitUse(kit));
 
             audience.sendMessage(ChatUtil.mini(this.messages.argument.kitOnCooldown.replace("{TIME}", DurationUtil.format(timeLeft))));
@@ -170,6 +176,9 @@ public class KitInventory {
         kit.getItems().forEach(item -> ItemUtil.giveItem(player, item));
 
         audience.sendMessage(ChatUtil.mini(this.messages.kitTaken.replace("{KIT}", kit.getDisplayName())));
+
+        this.kitData.addUsedKit();
+        this.configManager.load(this.kitData);
 
         player.closeInventory();
     }

@@ -41,7 +41,10 @@ dependencies {
     implementation("com.j256.ormlite:ormlite-jdbc:6.1")
 
     // triumphGui
-    implementation("dev.triumphteam:triumph-gui:3.1.2")
+    implementation("dev.triumphteam:triumph-gui:3.1.3")
+
+    // bStats
+    implementation("org.bstats:bstats-bukkit:3.0.0")
 }
 
 bukkit {
